@@ -22,11 +22,9 @@ export default function Welcome() {
   const { connectWallet, currentAccount, formData, setFormData, handleChange, sendTransaction } = useContext(TransactionContext);
 
   const handleSubmit = (e) => {
-    const { addressTo, amount, keyword, message } = formData;
     e.preventDefault();
-
-    if (!addressTo || !amount || keyword || message) return
-
+    const { addressTo, amount, keyword, message } = formData;
+    if (!addressTo || !amount || !keyword || !message) return
     sendTransaction();
   }
 
@@ -83,7 +81,7 @@ export default function Welcome() {
             <Input placeholder='Keyword (gif)' name='keyword' type='text' handleChange={handleChange} />
             <Input placeholder='Enter message' name='message' type='text' handleChange={handleChange} />
             <div className='h-[1px] w-full bg-gray-400 my-2' />
-            {true ? (<Loader />) :
+            {false ? (<Loader />) :
               (
                 <button type='button' onClick={handleSubmit} className='text-white w-fill mt-2 border-[1px] p-2 border-[#3d4f7c] rounded-full cursos-pointer'>
                   Send Now
