@@ -26,7 +26,16 @@ export default function Navbar() {
         {["Market", "Exchange", "Tutorials", "Wallets"].map((item, index) => {
           return <NavbarItem key={item + index} title={item} />
         })}
-        <li className='b0z-1>
+        <li className='bg-[#2952e3] text-inherit py-2 px-7 mx-4 rounded-full cursor-pointer hover:bg-[#2546bd]'>Login</li>
+        {/* <li className='bg-[#2952e3] text-inherit py-2 px-7 mx-4 rounded-full cursor-pointer hover:gb-[#2546bd]'></li> */}
+      </ul>
+      <div className='flex relative'>
+        {
+          toggleMenu ?
+            <AiOutlineClose fontSize={28} className='text-white md:hidden cursor-pointer' onClick={() => setToggleMenu(false)} />
+            : <HiMenuAlt4 fontSize={28} className='text-white md:hidden cursor-pointer' onClick={() => setToggleMenu(true)} />}
+        {toggleMenu && (
+          <ul className='z-1'>
             <li className='text-xl w-full my-2'>
               <AiOutlineClose onClick={() => setToggleMenu(false)} />
             </li>
