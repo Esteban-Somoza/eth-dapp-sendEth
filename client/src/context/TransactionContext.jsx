@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { ethers } from 'ethers'
+import { ethers } from "ethers";
 
 import { contractABI, contractAddress } from '../../utils/constants'
 
@@ -10,11 +10,12 @@ const { ethereum } = window
 
 const getEthereumContract = async () => {
     console.log(ethers);
+    // const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
     // const provider = new ethers.BrowserProvider(window.ethereum)
     // const signer = await provider.getSigner();
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const signer = await provider.getSigner();
+    const signer = provider.getSigner();
 
     const transactionContract = new ethers.Contract(contractAddress, contractABI, signer)
     console.log({
@@ -22,7 +23,7 @@ const getEthereumContract = async () => {
         signer,
         transactionContract
     })
-    
+
     console.log(transactionContract.getTransactionCount);
     return transactionContract
 }

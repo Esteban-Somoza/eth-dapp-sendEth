@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@tailwindcss/forms": "^0.5.3",
-    "ethers": "^6.0.4",
+    "ethers": "^5.4.7",
     "react-icons": "^4.7.1"
   }
 }
