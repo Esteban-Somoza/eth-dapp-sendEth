@@ -15,7 +15,7 @@ export default function Services() {
           </h1>
         </div>
       </div>
-      <div className='flex-1 flex flex-col justify-start items-center'>
+      <div className='flex flex-col justify-start items-center'>
         <ServiceCard
           color='bg-[#2952e3]'
           title="Security Guaranteed"
