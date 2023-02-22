@@ -9,22 +9,17 @@ export const TransactionContext = React.createContext();
 const { ethereum } = window
 
 const getEthereumContract = async () => {
-    console.log(ethers);
-    // const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-    // const provider = new ethers.BrowserProvider(window.ethereum)
-    // const signer = await provider.getSigner();
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const provider = new ethers.providers.Web3Provider(ethereum)
     const signer = provider.getSigner();
 
     const transactionContract = new ethers.Contract(contractAddress, contractABI, signer)
-    console.log({
-        provider,
-        signer,
-        transactionContract
-    })
+    // console.log({
+    //     provider,
+    //     signer,
+    //     transactionContract
+    // })
 
-    console.log(transactionContract.getTransactionCount);
+    // console.log(transactionContract.getTransactionCount);
     return transactionContract
 }
 
@@ -33,7 +28,7 @@ export const TransactionProvider = ({ children }) => {
     const [formData, setFormData] = useState({ addressTo: '', amount: '', keyword: '', message: '' })
     const [isLoading, setIsLoading] = useState(false);
     const [transactionCount, setTransactionCount] = useState(localStorage.getItem('transactionCount'));
-
+    console.log(transactionCount);
     const handleChange = (e, name) => {
         setFormData((prevState) => ({ ...prevState, [name]: e.target.value }))
     }
@@ -65,9 +60,10 @@ export const TransactionProvider = ({ children }) => {
             if (!ethereum) return alert('Please Install Metamask')
 
             const { addressTo, amount, keyword, message } = formData;
-            const transactionContract = getEthereumContract()
-            const parsedAmount = ethers.utils.parseEther(amount)
+            const transactionContract = await getEthereumContract()
 
+            const parsedAmount = ethers.utils.parseEther(amount)
+            console.log(parsedAmount);
             await ethereum.request({
                 method: 'eth_sendTransaction',
                 params: [{
@@ -90,6 +86,7 @@ export const TransactionProvider = ({ children }) => {
 
             const transactionCount = await transactionContract.getTransactionCount()
             setTransactionCount(transactionCount.toNumber())
+            return localStorage.setItem('transactionCount', transactionCount.toNumber())
 
         } catch (error) {
             console.log(error);
