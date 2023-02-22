@@ -6,21 +6,12 @@ import { BsInfoCircle } from 'react-icons/bs'
 import { TransactionContext } from '../context/TransactionContext'
 import Loader from './Loader'
 import { shortenAddress } from "../../utils/shortenAddress";
-
-const Input = ({ placeholder, name, type, value, handleChange }) => (
-  <input
-    placeholder={placeholder}
-    type={type}
-    step='0.0001'
-    value={value}
-    onChange={e => handleChange(e, name)}
-    className='my-2 w-full rounded-sm p-2 outline-none bh-transparent text-white border-none text-sm white-glassmorphism' />
-)
+import { Input } from './Input'
 
 const commonStyles = "min-h-[70px] sm:px-0 px-2 sm:min-w-[120px] flex justify-center items-center border-[0.5px] border-gray-400 text-sm font-light text-white";
 
 export default function Welcome() {
-  const { connectWallet, currentAccount, formData, setFormData, handleChange, sendTransaction } = useContext(TransactionContext);
+  const { connectWallet, currentAccount, formData, isLoading, setFormData, handleChange, sendTransaction } = useContext(TransactionContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -82,7 +73,7 @@ export default function Welcome() {
             <Input placeholder='Keyword (gif)' name='keyword' type='text' handleChange={handleChange} />
             <Input placeholder='Enter message' name='message' type='text' handleChange={handleChange} />
             <div className='h-[1px] w-full bg-gray-400 my-2' />
-            {false ? (<Loader />) :
+            {isLoading ? (<Loader />) :
               (
                 <button type='button' onClick={handleSubmit} className='text-white w-fill mt-2 border-[1px] p-2 border-[#3d4f7c] rounded-full cursos-pointer'>
                   Send Now

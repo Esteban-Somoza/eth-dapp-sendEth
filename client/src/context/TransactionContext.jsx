@@ -13,13 +13,6 @@ const getEthereumContract = async () => {
     const signer = provider.getSigner();
 
     const transactionContract = new ethers.Contract(contractAddress, contractABI, signer)
-    // console.log({
-    //     provider,
-    //     signer,
-    //     transactionContract
-    // })
-
-    // console.log(transactionContract.getTransactionCount);
     return transactionContract
 }
 
@@ -28,11 +21,34 @@ export const TransactionProvider = ({ children }) => {
     const [formData, setFormData] = useState({ addressTo: '', amount: '', keyword: '', message: '' })
     const [isLoading, setIsLoading] = useState(false);
     const [transactionCount, setTransactionCount] = useState(localStorage.getItem('transactionCount'));
-    console.log(transactionCount);
+    const [transactions, setTransactions] = useState([])
+
     const handleChange = (e, name) => {
         setFormData((prevState) => ({ ...prevState, [name]: e.target.value }))
     }
 
+    const getAllTransactions = async () => {
+        try {
+            if (!ethereum) return alert('please install metamask')
+            const transactionContract = await getEthereumContract();
+
+            const availableTransactions = await transactionContract.getAllTransactions();
+
+            const structuredTransactions = availableTransactions.map(t => {
+                return {
+                    addressTo: t.receiver,
+                    addressFrom: t.sender,
+                    timestamp: new Date(t.timestamp.toNumber() * 1000).toLocaleString(),
+                    message: t.message,
+                    keyword: t.keyword,
+                    amount: parseInt(t.amount._hex) / (10 ** 18)
+                }
+            })
+            setTransactions(structuredTransactions);
+        } catch (error) {
+            console.log(error);
+        }
+    }
     // minute 1:56:41 https://www.youtube.com/watch?v=Wn_Kb3MR_cU&t=935s
 
     const checkIfWalletIsConnected = async () => {
@@ -45,12 +61,24 @@ export const TransactionProvider = ({ children }) => {
             if (accounts.length) {
                 setCurrentAccount(accounts[0])
 
-                //getAllTransactions();
+                getAllTransactions();
             }
 
             // console.log(accounts);
         } catch (error) {
             console.log(error);
+            throw new Error('No ethereum object')
+        }
+    }
+
+    const checkIfTransactionsExist = async () => {
+        try {
+            const transactionContract = await getEthereumContract();
+            const transactionCount = await transactionContract.getTransactionCount();
+
+            return localStorage.setItem('transactionCount', transactionCount.toNumber())
+        } catch (error) {
+            console.error(error)
             throw new Error('No ethereum object')
         }
     }
@@ -86,7 +114,6 @@ export const TransactionProvider = ({ children }) => {
 
             const transactionCount = await transactionContract.getTransactionCount()
             setTransactionCount(transactionCount.toNumber())
-            return localStorage.setItem('transactionCount', transactionCount.toNumber())
 
         } catch (error) {
             console.log(error);
@@ -109,10 +136,11 @@ export const TransactionProvider = ({ children }) => {
 
     useEffect(() => {
         checkIfWalletIsConnected();
+        checkIfTransactionsExist();
     }, [])
 
     return (
-        <TransactionContext.Provider value={{ connectWallet, currentAccount, formData, setFormData, handleChange, sendTransaction }}>
+        <TransactionContext.Provider value={{ isLoading, connectWallet, transactions, currentAccount, formData, setFormData, handleChange, sendTransaction }}>
             {children}
         </TransactionContext.Provider>
     )
